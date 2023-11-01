@@ -1,0 +1,32 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    # ChecK: https://pre-commit.com/hooks.html
+    rev: v4.5.0
+    hooks:
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    -   id: check-added-large-files
+        args: [--maxkb=500, --enforce-all]  # define max file size in KB
+    -   id: check-merge-conflict
+    -   id: check-symlinks
+    -   id: check-json
+    -   id: check-toml
+    -   id: check-xml
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: destroyed-symlinks
+    -   id: detect-private-key
+    -   id: mixed-line-ending
+    -   id: requirements-txt-fixer
+    -   id: name-tests-test
+        args: [--pytest-test-first]
+-   repo: https://github.com/psf/black
+    rev: 23.10.1
+    hooks:
+    -   id: black
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.1.3
+    hooks:
+    -   id: ruff
+        args: [--fix]
