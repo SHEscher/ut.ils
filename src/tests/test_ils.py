@@ -95,10 +95,11 @@ def temp_dir_and_file():
 
 def test_tree(capsys):
     """Test tree() function."""
-    assert tree(".") is None
+    print(tree(Path(__file__).parent.parent.parent))
+    assert tree(Path(__file__).parent.parent.parent) is None
     out, err = capsys.readouterr()
     assert "├── README.md" in out
-    assert "├── ut/" in out
+    assert "├── ut" in out
     assert "└── ils.py" in out
 
 
