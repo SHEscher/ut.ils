@@ -528,51 +528,6 @@ def inverse_indexing(arr: npt.NDArray[Any], idx: list[int] | npt.NDArray[np.int_
     return inv_arr
 
 
-def interpolate_nan(arr_with_nan: npt.NDArray[np.float_]) -> npt.NDArray[np.float_]:
-    """
-    Return array with linearly interpolated values.
-
-    :param arr_with_nan: array with missing values
-    :return: updated array
-    """
-    missing_idx = np.where(np.isnan(arr_with_nan))[0]
-
-    if len(missing_idx) == 0:
-        print("There are no nan-values in the given vector.")
-
-    else:
-        for m_idx in missing_idx:
-            # if the first value is missing, take average of the next 5sec
-            if m_idx == 0:
-                arr_with_nan[m_idx] = np.nanmean(arr_with_nan[m_idx + 1: m_idx + 1 + 5])
-            # Else Take the mean of the two adjacent values
-            else:  # m_idx > 0  # noqa: PLR5501
-                if np.isnan(arr_with_nan[m_idx]):  # Check whether still missing (see linspace fill below)
-                    if not np.isnan(arr_with_nan[m_idx + 1]):  # we come from below
-                        arr_with_nan[m_idx] = np.mean([arr_with_nan[m_idx - 1], arr_with_nan[m_idx + 1]])
-                    else:  # the next value is also missing
-                        count = 0
-                        while True:
-                            if np.isnan(arr_with_nan[m_idx + 1 + count]):
-                                count += 1
-                            else:
-                                break
-
-                        fill_vec = np.linspace(
-                            start=arr_with_nan[m_idx - 1], stop=arr_with_nan[m_idx + 1 + count], num=3 + count
-                        )[1:-1]
-
-                        if len(fill_vec) != 1 + count:
-                            msg = "Implementation error at interpolation"
-                            raise AssertionError(msg)
-
-                        arr_with_nan[m_idx: m_idx + count + 1] = fill_vec
-
-        print(f"Interpolated {len(missing_idx)} values.")
-
-    return arr_with_nan
-
-
 def split_in_n_bins(
     a: list[Any] | (tuple[Any] | npt.NDArray[Any]), n: int, attribute_remainder: bool = True
 ) -> list[Any]:
@@ -616,6 +571,7 @@ def rectangularize_1d_array(arr: npt.NDArray[Any], wide: bool = False) -> npt.ND
     :param wide: whether to return a wide array (i.e., more columns than rows)
     :return: 2-D array
     """
+    arr = arr.squeeze()
     if np.ndim(arr) != 1:
         msg = "Array must be 1-D!"
         raise ValueError(msg)
@@ -744,6 +700,13 @@ class Bcolors:
     DICT: ClassVar = {"p": HEADERPINK, "b": OKBLUE, "g": OKGREEN, "y": WARNING, "r": FAIL, "ul": UNDERLINE, "bo": BOLD}
 
 
+def _col_check(col: str) -> None:
+    """Check whether the given color is valid."""
+    if col.lower() not in {"p", "b", "g", "y", "r"}:
+        msg = "col must be 'p'(ink), 'b'(lue), 'g'(reen), 'y'(ellow), 'r'(ed)"
+        raise ValueError(msg)
+
+
 def cprint(string: str, col: str | None = None, fm: str | None = None, ts: bool = False) -> None:
     """
     Colorize and format print-out. Add leading time-stamp (fs) if required.
@@ -754,10 +717,8 @@ def cprint(string: str, col: str | None = None, fm: str | None = None, ts: bool 
     :param ts: add leading time-stamp
     """
     if col:
-        col = col[0].lower()
-        if col not in {"p", "b", "g", "y", "r"}:
-            msg = "col must be 'p'(ink), 'b'(lue), 'g'(reen), 'y'(ellow), 'r'(ed)"
-            raise ValueError(msg)
+        col = col.lower()
+        _col_check(col=col)
         col = Bcolors.DICT[col]
 
     if fm:
@@ -781,10 +742,8 @@ def cprint(string: str, col: str | None = None, fm: str | None = None, ts: bool 
 def cinput(string: str, col: str | None = None) -> str:
     """Colorize string for input()."""
     if col:
-        col = col[0].lower()
-        if col not in {"p", "b", "g", "y", "r"}:
-            msg = "col must be 'p'(ink), 'b'(lue), 'g'(reen), 'y'(ellow), 'r'(ed)"
-            raise ValueError(msg)
+        col = col.lower()
+        _col_check(col=col)
         col = Bcolors.DICT[col]
 
     # input(given string) with given formatting
@@ -854,7 +813,7 @@ def check_executor(return_shell_bool: bool = False) -> bool | None:
     :return: only print (None) OR bool
     """
     ppid = os.getppid()
-    shell: bool = psutil.Process(ppid).name() in {"bash", "zsh"}  # TODO: extend for other shells
+    shell: bool = psutil.Process(ppid).name() in {"bash", "zsh"}  # TODO: extend for other shells  # noqa: FIX002
     print(
         "Current script{} is executed via: {}{}{}".format(
             f" {Bcolors.WARNING}{sys.argv[0]}{Bcolors.ENDC}" if shell else "",  # platform.sys
@@ -876,7 +835,11 @@ def cln(factor: int = 1) -> None:
 
 
 def replace_line_in_file(
-    path_to_file: str, pattern: str | re.Pattern, new_line: str | None, whole_line: bool = True, verbose: bool = False
+    path_to_file: str | Path,
+    pattern: str | re.Pattern,
+    fill_with: str | None,
+    whole_line: bool = True,
+    verbose: bool = False,
 ) -> bool | None:
     """
     Replace line with the matching pattern, either the whole line, or only the pattern.
@@ -885,20 +848,20 @@ def replace_line_in_file(
 
     :param path_to_file: the path to the text-like file
     :param pattern: the pattern to match per line in file, which follows the convention of re.Pattern
-    :param new_line: new line which replaces the old line; None OR "" will delete pattern/line
+    :param fill_with: new line which replaces the old line; None OR "" will delete pattern/line
     :param whole_line: whether to replace whole line, or only matching pattern
     :param verbose: verbose or not
     :return: whether pattern found or not
     """
     if not Path(path_to_file).exists():
         if verbose:
-            cprint(f"Couldn't find file '{path_to_file}'!", col="r")
+            cprint(string=f"Couldn't find file '{path_to_file}'!", col="r")
         return None
 
-    new_line = "" if new_line is None else new_line
-    if verbose and len(new_line) == 0:
+    fill_with = "" if fill_with is None else fill_with
+    if verbose and len(fill_with) == 0:
         if whole_line:
-            cprint(string="Given patterns will be deleted from file...", col="y")
+            cprint(string="Given patterns will be deleted from file ...", col="y")
         else:
             cprint(string="Lines with given pattern will be deleted ...", col="y")
 
@@ -910,11 +873,11 @@ def replace_line_in_file(
         if match is not None:
             found = True
             if whole_line:
-                if len(new_line) > 0:  # in the case of == 0: the line will be deleted
-                    new_line = new_line if new_line.endswith("\n") else new_line + "\n"
-                sys.stdout.write(new_line)
+                if len(fill_with) > 0:  # in the case of == 0: the line will be deleted
+                    fill_with = fill_with if fill_with.endswith("\n") else fill_with + "\n"
+                sys.stdout.write(fill_with)
             else:
-                sys.stdout.write(pattern.sub(new_line, old_line))
+                sys.stdout.write(pattern.sub(fill_with, old_line))
         else:
             sys.stdout.write(old_line)
 
@@ -924,10 +887,10 @@ def replace_line_in_file(
 # %% OS >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o
 
 
-def open_folder(path: str) -> None:
+def open_folder(path: str | Path) -> None:
     """Open specific folder or file in Finder."""
-    if not isinstance(path, str):
-        msg = f"Path must be string, not {type(path)}"
+    if not isinstance(path, (str, Path)):
+        msg = f"Path must be string or Path, not {type(path)}"
         raise TypeError(msg)
     if not Path(path).exists():
         msg = f"Path '{path}' doesn't exist."
@@ -964,7 +927,7 @@ def browse_files(initialdir: str | Path | None = None, filetypes: str | None = N
     return askopenfilename(parent=root, title="Choose the file", **kwargs)
 
 
-def delete_dir_and_files(parent_path: str, force: bool = False, verbose: bool = True) -> None:
+def delete_dir_and_files(parent_path: str | Path, force: bool = False, verbose: bool = True) -> None:
     """
     Delete the given folder and all subfolders and files.
 
@@ -978,7 +941,7 @@ def delete_dir_and_files(parent_path: str, force: bool = False, verbose: bool = 
     :param verbose: True: list files will be deleted
     :return: None
     """
-    # Print the effected files and sub-folders
+    # Print the effected files and subfolders
     if Path(parent_path).exists():
         if not (not verbose and force):
             print(f"\nFollowing (sub-)folders and files of parent folder '{parent_path}' would be deleted:")
@@ -986,18 +949,18 @@ def delete_dir_and_files(parent_path: str, force: bool = False, verbose: bool = 
                 cprint(string=f"{file}", col="b")
 
         # Double check: Ask whether to delete
-        delete = True if force else ask_true_false("Do you want to delete this tree and corresponding files?", "r")
+        delete = True if force else ask_true_false("Do you want to delete this tree and corresponding files?", col="r")
 
         if delete:
             # Delete all folders and files in the tree
             for dir_path, _dirn_ames, files in os.walk(parent_path, topdown=False):  # start from bottom
-                if verbose:
-                    cprint(string=f"Remove folder: {dir_path}", col="r")
                 for file_name in files:
                     if verbose:
                         cprint(string=f"Remove file: {file_name}", col="r")  # f style (for Python > 3.5)
                     Path(dir_path, file_name).unlink()
-                Path(dir_path).unlink()  # os.rmdir(dir_path)
+                if verbose:
+                    cprint(string=f"Remove folder: {dir_path}", col="r")
+                Path(dir_path).rmdir()  # os.rmdir(dir_path)
         else:
             cprint(string="Tree and files won't be deleted!", col="b")
 
@@ -1005,12 +968,12 @@ def delete_dir_and_files(parent_path: str, force: bool = False, verbose: bool = 
         cprint(string=f"Given folder '{parent_path}' doesn't exist.", col="r")
 
 
-def get_folder_size(parent_dir: str) -> int:
+def get_folder_size(parent_dir: str | Path) -> int:
     """Return size of the given parent directory with all subdirectories in bytes."""
     total_size = 0
-    for dir_path, _dir_names, file_names in os.walk(parent_dir):
+    for dir_path, _dir_names, file_names in os.walk(str(parent_dir)):
         for f in file_names:
-            fp = Path(dir_path) / f
+            fp = Path(dir_path, f)
             # skip if it is a symbolic link
             if not fp.is_symlink():
                 total_size += fp.stat().st_size  # os.path.getsize(fp)
@@ -1047,11 +1010,6 @@ def check_storage_size(obj: Any, verbose: bool = True) -> int:
         size_bytes = sys.getsizeof(obj)
         message = "Only trustworthy for pure python objects, otherwise returns size of view object."
 
-    if size_bytes == 0:
-        if verbose:
-            print("Size of given object equals 0 B")
-        return 0
-
     if verbose:
         print(f"Size of given object: {bytes_to_rep_string(size_bytes=size_bytes)} {message}")
 
@@ -1062,7 +1020,7 @@ def check_storage_size(obj: Any, verbose: bool = True) -> int:
 
 
 @function_timed
-def save_obj(obj: Any, name: str, folder: str, hp: bool = True, as_zip: bool = False, save_as: str = "pkl") -> None:
+def save_obj(obj: Any, name: str, folder: str, hp: bool = True, as_zip: bool = False, save_as: str = "pkl"):
     """
     Save object as pickle or numpy file.
 
@@ -1132,55 +1090,58 @@ def load_obj(name: str, folder: str | PosixPath) -> Any:
     # Check all files in the folder which find the name + *suffix
     found_files = [str(pa) for pa in Path(folder).glob(name + "*")]
 
+    n_max = 2
     if not any(name.endswith(fm) for fm in possible_fm):
         # No file-format found, check folder for files
         if len(found_files) == 0:
             msg = f"In '{folder}' no file with given name='{name}' was found!"
             raise FileNotFoundError(msg)
-
-        if len(found_files) == 2:  # len(found_files) == 2  # noqa: PLR2004
+        if len(found_files) == n_max:  # == 2
             # There can be a zipped & unzipped version, take the unzipped version if applicable
             file_name_overlap = get_string_overlap(found_files[0], found_files[1])
             if file_name_overlap.endswith(".pkl"):  # .pkl and .pkl.gz found
                 name = Path(file_name_overlap).name
-            if file_name_overlap.endswith(".np"):  # .npy and .npz found
+            elif file_name_overlap.endswith(".np"):  # .npy and .npz found
                 name = Path(file_name_overlap).name + "y"  # .npy
             else:  # if the two found files are not of the same file-type
                 _raise_name_issue()
-
-        elif len(found_files) > 2:  # noqa: PLR2004
+        elif len(found_files) > n_max:
             _raise_name_issue()
-
         else:  # len(found_files) == 1
             name = Path(found_files[0]).name  # un-list
 
-    path_to_file = os.path.join(folder, name)  # noqa: PTH118
+    path_to_file = Path(folder, name)
 
     # Load and return
-    if path_to_file.endswith((".pkl", ".pkl.gz")):  # pickle case
-        open_it = gzip.open if path_to_file.endswith(".gz") else open
+    if path_to_file.name.endswith((".pkl", ".pkl.gz")):  # pickle case
+        open_it = gzip.open if path_to_file.name.endswith(".gz") else open
         with open_it(path_to_file, "rb") as f:
             return pickle.load(f)
     else:  # numpy case
         file = np.load(path_to_file)
         if isinstance(file, np.lib.npyio.NpzFile):  # name.endswith(".npz"):
-            # If numpy zip (.npz)
-            file = file["arr"]
             # This asserts that object was saved this way: np.savez_compressed(file=..., arr=obj), as
-            # in save_obj():
+            # in save_obj() or with np.savez(file=..., obj)
+            # If numpy zip (.npz)
+            arr_keys = [k for k in file if "arr" in k]
+            if len(arr_keys) > 1:
+                cprint(
+                    string=f"'{path_to_file}' as several array keys! The returned file is of type: {type(file)}",
+                    col="y",
+                )
+            else:
+                file = file[arr_keys[0]]
         return file
 
 
-def memory_in_use() -> None:
+def memory_in_use() -> int:
     """Check how much memory in currently in use."""
-    # psutil.virtual_memory() returns bytes
-    print(
-        f"{psutil.virtual_memory().used / (10 ** 9):.3f} GB ({psutil.virtual_memory().percent} %) of "
-        f"memory are used."
-    )
+    bytes_in_use = psutil.virtual_memory().used
+    print(f"{bytes_to_rep_string(bytes_in_use)} ({psutil.virtual_memory().percent} %) of memory are used.")
+    return bytes_in_use
 
 
-def free_memory(variable: tuple | list | dict | None = None, verbose: bool = False) -> None:
+def free_memory(variable: tuple | list | dict | Any | None = None, verbose: bool = False) -> None:
     """
     Free memory from given variable.
 
@@ -1273,44 +1234,6 @@ def deprecated(dry_funct: Callable[..., Any] | None = None, message: str | None 
         return _deprecated(dry_funct)
 
     return _deprecated
-
-
-def run_gpu_test(log_device_placement: bool = False) -> None:
-    """Test GPU implementation."""
-    try:
-        import tensorflow as tf
-    except ImportError:
-        cprint(string="Tensorflow is not installed!", col="r")
-        return
-
-    n_gpus = len(tf.config.list_physical_devices("GPU"))
-    gpu_available = n_gpus > 0
-    cprint(string=f"\nNumber of GPU device(s) available: {n_gpus}", col="g" if gpu_available else "r", fm="bo")
-
-    # Run some operations on the GPU/CPU
-    device_name = ["/gpu:0", "/cpu:0"] if gpu_available else ["/cpu:0"]
-    tf.debugging.set_log_device_placement(log_device_placement)
-    for device in device_name:
-        for shape in [6000, 12000]:
-            cprint(string=f"\nRun operations on device: {device} using tensor with shape: {shape}", col="b", fm="ul")
-            with tf.device(device):
-                # Create some tensors and perform an operation
-                start_time = datetime.now()
-                a = tf.constant([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-                b = tf.constant([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
-                c = tf.matmul(a, b)
-                print(f"{c = }")
-
-                # Create some more complex tensors and perform an operation
-                random_matrix = tf.compat.v1.random_uniform(shape=(shape, shape), minval=0, maxval=1)
-                dot_operation = tf.matmul(random_matrix, tf.transpose(random_matrix))
-                sum_operation = tf.reduce_sum(dot_operation)
-                print(f"{sum_operation = }")
-
-            print("\n")
-            cprint(string=f"Shape: {(shape, shape)} | Device: {device}", col="y")
-            cprint(string=f"Time taken: {datetime.now() - start_time}", col="y")
-            print("\n" + "*<o>" * 15)
 
 
 def end() -> None:

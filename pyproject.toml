@@ -1,8 +1,8 @@
 # Check this for proper formatting: https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#declaring-project-metadata
 [project]
-name = "gUt"
+name = "ut"
 version = "0.1.0"
-description = "Utility functions for (research) projects."
+description = "ut.ils comprises utility functions for (research) projects."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { file = "LICENSE" }
@@ -28,7 +28,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "requests>=2",
+    "numpy",
+    "psutil",
+    "requests",
     "toml>=0.10; python_version < '3.11'",
 ]
 
@@ -44,7 +46,7 @@ develop = [
 ]
 
 [project.urls]
-repository = "https://github.com/SHEscher/gUt"
+repository = "https://github.com/SHEscher/ut.ils"
 
 [tool.setuptools]
 platforms = ["unix", "linux", "osx", "cygwin", "win32"]
@@ -53,12 +55,12 @@ zip-safe = false
 # # To automatically find the package(s) (Beta feature (Oct, 2022)):
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["gut"]
+include = ["ut"]
 exclude = ["tests"]
 
 # Include non-python files in the package
 # [options.package_data]
-# gut = ["*.txt", "*.rst"]
+# ut = ["*.txt", "*.rst"]
 
 # Exclude specific non-python files in the package
 # [tool.setuptools.exclude-package-data]
@@ -193,7 +195,7 @@ suppress-none-returning = true
 allow-dict-calls-with-keyword-arguments = true
 
 [tool.ruff.isort]
-known-local-folder = ["src/gut"]
+known-local-folder = ["src/ut"]
 # known-first-party = ...
 
 [tool.ruff.mccabe]
@@ -216,7 +218,7 @@ max-statements = 50  # default: 50
 [tool.black]
 line-length = 119
 target-version = ["py38", "py39", "py310", "py311", "py312"]
-src = ["src/gut", "src/tests"]
+src = ["src/ut", "src/tests"]
 include = '(\.pyi?|\.ipynb)$'
 exclude = '''  # A regex preceded with ^/ will apply only to files and directories in the root of the project.
 (
@@ -237,4 +239,4 @@ push = true
 
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['^version = "{version}"', '^current_version = "{version}"']
-"src/gut/__init__.py" = ['^__version__ = "{version}"']
+"src/ut/__init__.py" = ['^__version__ = "{version}"']
