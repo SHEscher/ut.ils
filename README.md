@@ -1,10 +1,10 @@
 # ut.ils
 
-`[Last update: November  2, 2023]`
+`[Last update: November  3, 2023]`
 
 ## Project description
 
-A collection of utilities for Python-based research projects.
+A small collection of utility functions for Python-based research projects.
 
 ## Project structure
 
@@ -13,7 +13,6 @@ A collection of utilities for Python-based research projects.
 `ut.ils` is optimized for Python versions  `>=3.8` and can be installed via `pip`:
 
 ```shell
-# assuming your current working dircetory is the project root
 pip install -U https://github.com/SHEscher/ut.git
 ```
 
