@@ -777,7 +777,7 @@ def test_free_memory(capsys):
 def test_send_to_mattermost():
     """Test send_to_mattermost() function."""
     response = send_to_mattermost(
-        text=f"Hello from {__file__}!",
+        text=f"Hello from {Path(__file__).name}!",
         incoming_webhook=dotenv_values(".env")["minerva_webhook_in"],
         username="pytest",
         channel="",
