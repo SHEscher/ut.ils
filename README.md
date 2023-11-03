@@ -13,10 +13,17 @@ A small collection of utility functions for Python-based research projects.
 `ut.ils` is optimized for Python versions  `>=3.8` and can be installed via `pip`:
 
 ```shell
-pip install -U https://github.com/SHEscher/ut.git
+pip install -U git+https://github.com/SHEscher/ut.ils.git
+```
+
+Drop the package in a `requirements.txt` file, `setup.cfg`, or `pyproject.toml` of your project as:
+
+```text
+ut @ git+https://github.com/SHEscher/ut.ils.git
 ```
 
 ## Get started
+
 ```python
 # Import the utilities you need
 from ut.ils import cprint  # add more
@@ -26,4 +33,5 @@ cprint("Hello! Import all utilities you need from `ut.ils`!", col="g", fm="b")
 ```
 
 ## Contributors/Collaborators
+
 *Open for suggestions, and pull requests.*
