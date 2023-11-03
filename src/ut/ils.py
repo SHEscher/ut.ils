@@ -623,13 +623,22 @@ def get_string_overlap(s1: str, s2: str) -> str:
 
 
 def ol(string: str, wide_bar: bool = True) -> str:
-    """Create overline over given string or character."""
+    """
+    Create overline over given string or character.
+
+    ol("x") -> "x̅"
+    """
     bw = "\u0305" if wide_bar else "\u0304"  # 0305: wide; 0304: smaller
     return "".join([f"{char}{bw}" for char in string])
 
 
 def ss(string_with_nr: str, sub: bool = True) -> str:
-    """Translate the following chars '0123456789()' into subscript or superscript and vice versa."""
+    """
+    Translate the following chars '0123456789()' into subscript or superscript and vice versa.
+
+    ss("H2O") -> "H₂O"
+    ss("This is x2", sub=False) -> "This is x²"
+    """
     # TODO: also for chars  # noqa: FIX002
     # https://en.wikipedia.org/wiki/Unicode_subscripts_and_superscripts
     subs = str.maketrans("0123456789()₀₁₂₃₄₅₆₇₈₉₍₎", "₀₁₂₃₄₅₆₇₈₉₍₎0123456789()")
@@ -777,7 +786,7 @@ def suppress_print(func: Callable[..., Any]) -> Callable[..., Any]:
 
 
 def true_false_request(func: Callable[..., Any]) -> Callable[..., Any]:
-    """Wrap print function with true false request."""
+    """Wrap print function with true-false-request."""
 
     @wraps(func)
     def wrapper(*args: str, **kwargs: str) -> bool:
@@ -807,7 +816,7 @@ def ask_true_false(question: str, col: str = "b") -> None:
 
 def check_executor(return_shell_bool: bool = False) -> bool | None:
     """
-    Check whether the script that executes this function is run via bash.
+    Check from where the script that executes this function is run from.
 
     :param return_shell_bool: True: provide boolean about result
     :return: only print (None) OR bool
@@ -1151,6 +1160,7 @@ def free_memory(variable: tuple | list | dict | Any | None = None, verbose: bool
 
     Alternatively, use subprocesses like this:
         import concurrent.futures
+
         def df_processing_func(data):
             ...
             return df
@@ -1194,8 +1204,8 @@ def send_to_mattermost(
     :param text: Text to send to channel (can have Markdown syntax)
     :param incoming_webhook: incoming webhook must be generated via Mattermost settings.
     :param username: Username what should be displayed, sending this message.
-    :param channel: webhooks are usually bound to channel (default).
-                    However, another channel can be given if the webhooks allow sending there, too.
+    :param channel: webhooks are usually bound to a channel (default).
+                    However, another channel can be given if the webhooks allow sending messages there, too.
     :param icon_url: Set an icon for the sender.
     :return: response message
     """
@@ -1237,7 +1247,13 @@ def deprecated(dry_funct: Callable[..., Any] | None = None, message: str | None 
 
 
 def end() -> None:
-    """Fire *end* firework."""
+    """
+    Fire *end* firework.
+
+    Can be placed at the end of a script to indicate that the script has finished.
+
+    :return: None
+    """
     cprint("\n" + "*<o>*" * 9 + "  END  " + "*<o>*" * 9 + "\n", col="p", fm="bo")
 
 
