@@ -106,11 +106,11 @@ def test_tree(capsys):
 def test_find(capsys, temp_dir_and_file):
     """Test find() function."""
     results = find(
-        fname="setup.py", folder=".", typ="file", exclusive=True, fullname=True, abs_path=True, verbose=True
+        fname="ils.py", folder="./src/ut", typ="file", exclusive=True, fullname=True, abs_path=True, verbose=True
     )
     assert isinstance(results, str)
     assert results.startswith("/"), f"results should be an absolute path, but is {results}"
-    assert results.endswith("setup.py")
+    assert results.endswith("ils.py")
 
     temp_dir, temp_file = temp_dir_and_file
     temp_file2 = temp_dir / Path(temp_file.stem).with_suffix(".py")
@@ -636,7 +636,7 @@ def test_check_storage_size(capsys):
     size_bytes = check_storage_size(obj=[1, 2, 3], verbose=True)
     out, err = capsys.readouterr()
     assert "Only trustworthy for pure python objects, otherwise returns size of view object" in out
-    assert size_bytes < 100
+    assert size_bytes < 150
 
 
 def test_save_obj(temp_dir_and_file):

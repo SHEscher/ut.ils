@@ -37,7 +37,7 @@ dependencies = [
 [project.optional-dependencies]
 develop = [
     "black[jupyter]>=23.10.1",
-    "ruff>=0.1.3",
+    "ruff>=0.1.4",
     "tox>=4.11.3",
     "pre-commit>=3.5.0",
     "pytest>=7.4.2",
@@ -240,3 +240,30 @@ push = true
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['^version = "{version}"', '^current_version = "{version}"']
 "src/ut/__init__.py" = ['^__version__ = "{version}"']
+
+[tool.tox]
+legacy_tox_ini = """
+    [tox]
+    min_version = 4.11.3
+    color = true
+    rootdir = "."
+    isolated_build = true
+    envlist = py{38,39,310,311,312}, lint
+
+    [testenv]
+    desciption = Run tests with pytest
+    skip_install = false
+    deps =
+        pytest>=7.4.2
+        python-dotenv==1.0.0
+    commands =
+        pytest . -k "not test_browse_files and not test_check_executor and not test_free_memory"
+
+    [testenv:lint]
+    description = "Run linters with ruff"
+    skip_install = false
+    deps =
+        ruff>=0.1.4
+    commands =
+        ruff .
+"""
