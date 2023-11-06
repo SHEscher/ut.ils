@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import difflib
 import fileinput
+import gc
 import gzip
 import math
 import os
@@ -1169,8 +1170,6 @@ def free_memory(variable: tuple | list | dict | Any | None = None, verbose: bool
             df = executor.map(df_processing_func, [data])[0]
 
     """
-    import gc
-
     if verbose:
         print("Before cleaning memory ...")
         memory_in_use()
