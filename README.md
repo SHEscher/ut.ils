@@ -1,6 +1,6 @@
 # ut.ils
 
-`[Last update: November  3, 2023]`
+`[Last update: November  6, 2023]`
 
 ## Project description
 
@@ -32,6 +32,10 @@ from ut.ils import cprint  # add more
 cprint("Hello! Import all utilities you need from `ut.ils`!", col="g", fm="b")
 ```
 
-## Contributors/Collaborators
+Check out [`src/ut/ils.py`](src/ut/ils.py) for all available utilities.
+
+(*docs will be added at a later times point.*)
+
+## Contributions
 
 *Open for suggestions, and pull requests.*
