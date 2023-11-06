@@ -91,7 +91,7 @@ warn_unreachable = true
 warn_unused_configs = true
 no_implicit_reexport = true
 
-[tool.coverage.run]
+[tool.coverage.run]  # https://coverage.readthedocs.io/en/latest/config.html
 data_file = "src/tests/.coverage"
 
 [tool.coverage.report]
