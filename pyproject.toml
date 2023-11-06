@@ -228,19 +228,6 @@ exclude = '''  # A regex preceded with ^/ will apply only to files and directori
 '''
 # preview = true
 
-# For instance run in shell: bumpver update --patch --no-fetch --dry
-[tool.bumpver]
-current_version = "0.1.0"
-version_pattern = "MAJOR.MINOR.PATCH"
-commit_message = "bump version {old_version} -> {new_version}"
-commit = true
-tag = true
-push = true
-
-[tool.bumpver.file_patterns]
-"pyproject.toml" = ['^version = "{version}"', '^current_version = "{version}"']
-"src/ut/__init__.py" = ['^__version__ = "{version}"']
-
 [tool.tox]
 legacy_tox_ini = """
     [tox]
@@ -267,3 +254,16 @@ legacy_tox_ini = """
     commands =
         ruff .
 """
+
+# For instance run in shell: bumpver update --patch --no-fetch --dry
+[tool.bumpver]
+current_version = "0.1.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version {old_version} -> {new_version}"
+commit = true
+tag = true
+push = true
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['^version = "{version}"', '^current_version = "{version}"']
+"src/ut/__init__.py" = ['^__version__ = "{version}"']
