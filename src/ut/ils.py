@@ -615,7 +615,7 @@ def get_string_overlap(s1: str, s2: str) -> str:
     :return overlap between two strings [str]
     """
     s = difflib.SequenceMatcher(None, s1, s2)
-    pos_a, pos_b, size = s.find_longest_match(0, len(s1), 0, len(s2))
+    pos_a, _, size = s.find_longest_match(0, len(s1), 0, len(s2))  # _ = pos_b
 
     return s1[pos_a: pos_a + size]
 

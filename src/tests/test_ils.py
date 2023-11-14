@@ -97,7 +97,7 @@ def test_tree(capsys):
     """Test tree() function."""
     print(tree(Path(__file__).parent.parent.parent))
     assert tree(Path(__file__).parent.parent.parent) is None
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "├── README.md" in out
     assert "├── ut" in out
     assert "└── ils.py" in out
@@ -125,7 +125,7 @@ def test_find(capsys, temp_dir_and_file):
         abs_path=True,
         verbose=True,
     )
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert results is None
     assert "Found several files for given fname='" in out
 
@@ -138,7 +138,7 @@ def test_find(capsys, temp_dir_and_file):
         abs_path=True,
         verbose=True,
     )
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert isinstance(results, list)
     assert len(results) == 2
     assert "return list of file paths" in out
@@ -146,7 +146,7 @@ def test_find(capsys, temp_dir_and_file):
     results = find(
         fname="NO_FILE", folder=".test_cache", typ="file", exclusive=False, fullname=False, abs_path=True, verbose=True
     )
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert results is None
     assert "Did not find any file for given fname='NO_FILE', return None" in out
 
@@ -161,7 +161,7 @@ def test_function_timed(capsys):
         sleep(0.25)
 
     test_function()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Processing time of test_function: 0:00:00." in out
 
 
@@ -171,7 +171,7 @@ def test_loop_timer(capsys):
     for i in range(5):
         sleep(0.2)
         loop_timer(start_time=start_time, loop_length=5, loop_idx=i, loop_name="Test loop", add_daytime=False)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Total duration of loop Test loop" in out
 
 
@@ -201,7 +201,7 @@ def test_try_funct(capsys):
         raise Exception(msg)
 
     test_function()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Function test_function couldn't be successfully executed!" in out
 
 
@@ -306,7 +306,7 @@ def test_split_in_n_bins(capsys):
     exp3 = np.array([5, 6])
     exp4 = np.array([7, 8])
     r1, r2, r3, r4 = split_in_n_bins(a=a, n=3, attribute_remainder=False)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "2 remainder were put in extra bin. Return 4 bins instead of 3." in out
     assert np.all(exp1 == r1)
     assert np.all(exp2 == r2)
@@ -346,7 +346,7 @@ def test_get_n_cols_and_rows(capsys):
     """Test get_n_cols_and_rows() function."""
     assert get_n_cols_and_rows(n_plots=9, square=True, verbose=False) == (3, 3)
     assert get_n_cols_and_rows(n_plots=10, square=True, verbose=True) == (4, 3)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "There will 2 empty plot slots." in out
     assert get_n_cols_and_rows(n_plots=10, square=False, verbose=False) == (5, 2)
 
@@ -392,19 +392,19 @@ def test_cprint(capsys):
     """Test cprint() function."""
     string = "Hello test!"
     cprint(string=string, col="g")
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Hello test!" in out
 
     cprint(string=string, fm="bo")
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Hello test!" in out
 
     cprint(string=string, ts=True)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert str(datetime.now())[:4] in out
 
     cprint(string="\n" + string + "\n\tBye!", ts=True)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert str(datetime.now())[:4] in out
 
     with pytest.raises(ValueError, match="col must be"):
@@ -425,12 +425,12 @@ def test_cinput(monkeypatch):
 def test_block_print(capsys):
     """Test block_print() function."""
     foo()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert out == "test\n"
 
     block_print()
     foo()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert not out
 
 
@@ -447,7 +447,7 @@ def test_suppress_print(capsys):
         print("test")
 
     test_function()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert not out
     enable_print()
 
@@ -472,7 +472,7 @@ def test_ask_true_false(monkeypatch):
 def test_check_executor(capsys):
     """Test check_executor() function."""
     is_shell = check_executor(return_shell_bool=True)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert is_shell
     assert "Current script" in out
 
@@ -480,13 +480,13 @@ def test_check_executor(capsys):
 def test_cln(capsys):
     """Test cln() function."""
     cln()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "\n\n\n\n\n\n\n\n\n\n\n\n\n\n" in out
 
 
 def test_replace_line_in_file(capsys, temp_dir_and_file):
     """Test replace_line_in_file() function."""
-    temp_dir, temp_file = temp_dir_and_file
+    _, temp_file = temp_dir_and_file  # _ = temp_dir
 
     # Replace part of a line: "It's a beautiful day." -> "It's a sunny morning".
     found = replace_line_in_file(
@@ -519,7 +519,7 @@ def test_replace_line_in_file(capsys, temp_dir_and_file):
         whole_line=True,  # -> delete whole line with that pattern
         verbose=True,
     )
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()  # _ = err
     assert found
     assert not temp_file.read_text()  # should have deleted both lines
     assert "Given patterns will be deleted from file ..." in out
@@ -534,7 +534,7 @@ def test_replace_line_in_file(capsys, temp_dir_and_file):
         whole_line=False,  # -> but keep the rest of the line
         verbose=True,
     )
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert found
     assert "Lines with given pattern will be deleted ..." in out
     assert "Good !\nIt's a sunny .\n" in temp_file.read_text()
@@ -547,7 +547,7 @@ def test_replace_line_in_file(capsys, temp_dir_and_file):
         whole_line=True,
         verbose=True,
     )
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert not found
     assert "Couldn't find file 'TO/NO/WHERE'!" in out
 
@@ -577,12 +577,12 @@ def test_delete_dir_and_files(capsys, monkeypatch, temp_dir_and_file):
     temp_dir, temp_file = temp_dir_and_file
     monkeypatch.setattr("builtins.input", lambda _: "F")
     delete_dir_and_files(parent_path=temp_dir, force=False, verbose=True)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Tree and files won't be deleted!" in out
 
     monkeypatch.setattr("builtins.input", lambda _: "T")
     delete_dir_and_files(parent_path=temp_dir, force=False, verbose=True)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Following (sub-)folders and files of parent folder" in out
     assert "Remove file:" in out
     assert "Remove folder:" in out
@@ -595,7 +595,7 @@ def test_delete_dir_and_files(capsys, monkeypatch, temp_dir_and_file):
 
     # Delete non-existing folder
     delete_dir_and_files(parent_path="SOME/WHERE", force=True, verbose=False)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "doesn't exist." in out
 
 
@@ -628,13 +628,13 @@ def test_check_storage_size(capsys):
     size_bytes = check_storage_size(obj=arr, verbose=False)
     assert "MB" in bytes_to_rep_string(size_bytes)
     size_bytes = check_storage_size(obj=arr, verbose=True)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "MB" in out
     assert size_bytes == 2**27  # 8 bytes per position [size_bytes / ((2**8)**3)]
     assert size_bytes == arr.nbytes
 
     size_bytes = check_storage_size(obj=[1, 2, 3], verbose=True)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Only trustworthy for pure python objects, otherwise returns size of view object" in out
     assert size_bytes < 150
 
@@ -735,7 +735,7 @@ def test_load_obj(capsys, temp_dir_and_file):
 
     np.savez_compressed(temp_dir / file_name, arr, arr)  # save multiple arrays
     arr_loaded = load_obj(name=file_name, folder=temp_dir)
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "as several array keys" in out
     for al_key in arr_loaded:
         assert np.all(arr_loaded[al_key] == arr)
@@ -746,7 +746,7 @@ def test_load_obj(capsys, temp_dir_and_file):
 def test_memory_in_use(capsys):
     """Test memory_in_use() function."""
     memory_in_use()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "%) of memory are used." in out
 
 
@@ -755,14 +755,14 @@ def test_free_memory(capsys):
     free_memory(variable=None, verbose=False)
     arr = np.ones(shape=(2**10, 2**10, 2**10))
     start_in_use = memory_in_use()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "%) of memory are used." in out
 
     del arr
     free_memory(variable=None, verbose=True)
     end_in_use = memory_in_use()
     assert end_in_use < start_in_use
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "Before cleaning memory" in out
     assert "After cleaning memory ..." in out
     with pytest.raises(NameError, match="cannot access local variable 'arr' where it is not associated with a value"):
@@ -812,7 +812,7 @@ def test_deprecated():
 def test_end(capsys):
     """Test end() function."""
     end()
-    out, err = capsys.readouterr()
+    out, _ = capsys.readouterr()
     assert "*<o>*" in out
     assert "END" in out
 
