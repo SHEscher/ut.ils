@@ -13,10 +13,10 @@ import gc
 import gzip
 import math
 import os
-import pickle
+import pickle  # noqa: S403
 import platform
 import re
-import subprocess
+import subprocess  # noqa: S404
 import sys
 import warnings
 from datetime import datetime, timedelta
@@ -49,6 +49,7 @@ class DisplayablePath:
         * This uses recursion. It will raise a RecursionError on really deep folder trees
         * The tree is lazily evaluated. It should behave well on really wide folder trees.
           Immediate children of a given folder are not lazily evaluated, though.
+
     """
 
     display_filename_prefix_middle = "├──"
@@ -617,7 +618,7 @@ def get_string_overlap(s1: str, s2: str) -> str:
     s = difflib.SequenceMatcher(None, s1, s2)
     pos_a, _, size = s.find_longest_match(0, len(s1), 0, len(s2))  # _ = pos_b
 
-    return s1[pos_a: pos_a + size]
+    return s1[pos_a : pos_a + size]
 
 
 # %% Color prints & I/O << o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o
@@ -743,7 +744,7 @@ def cprint(string: str, col: str | None = None, fm: str | None = None, ts: bool 
         while string.startswith(("\n", "\t")):
             pfx += string[:1]
             string = string[1:]
-        string = f"{pfx}{datetime.now():%Y-%m-%d %H:%M:%S} | " + string
+        string = f"{pfx}{datetime.now():%Y-%m-%d %H:%M:%S} | {string}"
 
     # print given string with given formatting
     print(f"{col if col else ''}{fm if fm else ''}{string}{Bcolors.ENDC}")
