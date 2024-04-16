@@ -23,7 +23,7 @@ import warnings
 from datetime import datetime, timedelta
 from functools import wraps
 from pathlib import Path, PosixPath
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, Sequence
 
 import numpy as np
 import psutil
@@ -460,7 +460,7 @@ def oom(number: float) -> float:
 # %% Sorter  o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o
 
 
-def natural_sort(list_to_sort: list[str]) -> list[str]:
+def natural_sort(list_to_sort: list[str] | tuple[str] | Sequence[str]) -> list[str]:
     """
     Sort a list naturally.
 
