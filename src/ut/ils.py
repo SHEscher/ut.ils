@@ -4,6 +4,7 @@ Collection of utility functions.
 
 Author: Simon M. Hofmann | <[firstname].[lastname][ät]pm.me> | 2023
 """
+
 # %% Imports
 from __future__ import annotations
 
@@ -457,6 +458,23 @@ def oom(number: float) -> float:
 
 
 # %% Sorter  o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o
+
+
+def natural_sort(list_to_sort: list[str]) -> list[str]:
+    """
+    Sort a list naturally.
+
+    For instance:
+
+        ["Head34", "Head100", "Head8"] -> ["Head8", "Head34", "Head100"]
+
+    Source: https://stackoverflow.com/questions/4836710/is-there-a-built-in-function-for-string-natural-sort
+
+    :param list_to_sort: List to sort.
+    """
+    convert = lambda text: int(text) if text.isdigit() else text.lower()  # noqa: E731
+    alphanum_key = lambda key: [convert(c) for c in re.split("([0-9]+)", key)]  # noqa: E731
+    return sorted(list_to_sort, key=alphanum_key)
 
 
 def sort_row_by_row(mat: npt.NDArray[Any], mat_idx: npt.NDArray[int]) -> npt.NDArray[Any]:

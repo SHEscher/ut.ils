@@ -7,6 +7,7 @@ Run me via the shell:
     pytest . --cov; coverage html; open src/tests/coverage_html_report/index.html
 
 """
+
 # %% Import
 import re
 from datetime import datetime, timedelta
@@ -47,6 +48,7 @@ from ut.ils import (
     load_obj,
     loop_timer,
     memory_in_use,
+    natural_sort,
     normalize,
     ol,
     oom,
@@ -258,6 +260,18 @@ def test_oom():
     assert oom(10**0) == 0
     with pytest.raises(ValueError, match="math domain error"):
         oom(0)
+
+
+def test_natural_sort():
+    """Test natural_sort() function."""
+    unsorted_list_int = ["23", "105", "9"]
+    assert natural_sort(unsorted_list_int) == ["9", "23", "105"]
+    unsorted_list_str1 = ["Sub-23", "Sub-105", "Sub-9"]
+    assert natural_sort(unsorted_list_str1) == ["Sub-9", "Sub-23", "Sub-105"]
+    unsorted_list_str2 = ["Nr 23", "Nr 105", "Nr 9"]
+    assert natural_sort(unsorted_list_str2) == ["Nr 9", "Nr 23", "Nr 105"]
+    unsorted_list_str3 = ["M1.23", "M1.105", "M1.9"]
+    assert natural_sort(unsorted_list_str3) == ["M1.9", "M1.23", "M1.105"]
 
 
 def test_inverse_sort_row_by_row():
