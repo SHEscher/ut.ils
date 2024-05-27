@@ -36,10 +36,10 @@ dependencies = [
 
 [project.optional-dependencies]
 develop = [
-    "ruff>=0.3.7",
-    "tox>=4.11.3",
-    "pre-commit>=3.7.0",
-    "pytest>=8.1.1",
+    "ruff>=0.4.5",
+    "tox>=4.15.0",
+    "pre-commit>=3.7.1",
+    "pytest>=8.2.1",
     "pytest-cov>=5.0.0",
     "python-dotenv==1.0.1",
 ]
@@ -165,7 +165,7 @@ lint.ignore = [
     "TD002",  # Missing author in To-Do
     "TD003",  # Missing issue link on the line following a To-Do
 ]
-lint.ignore-init-module-imports = true  # void automatically removing unused imports in __init__.py
+# lint.ignore-init-module-imports = true # void automatically removing unused imports in __init__.py [deprecated]
 respect-gitignore = true  # files and folder ignored in gitignore are ignore by ruff as well [default: true]
 src = ["src/ut", "src/notebooks", "src/tests"]
 # Exclude a variety of commonly ignored directories.
