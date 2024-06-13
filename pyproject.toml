@@ -35,11 +35,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+vizual = [  # this is for `ut.viz`
+    "matplotlib>=3",
+    "pandas>=2",
+    "scikit-learn>=1",
+    "statsmodels>=0.13",
+]
+
 develop = [
-    "ruff>=0.4.5",
-    "tox>=4.15.0",
+    "ruff>=0.4.8",
+    "tox>=4.15.1",
     "pre-commit>=3.7.1",
-    "pytest>=8.2.1",
+    "pytest>=8.2.2",
     "pytest-cov>=5.0.0",
     "python-dotenv==1.0.1",
 ]
@@ -209,7 +216,7 @@ ignore-names = []  # fill with specific class, function, variable names
 # convention = "google"  # "numpy", "pep257"
 
 [tool.ruff.lint.pylint]
-max-args = 7  # default: 5
+max-args = 10 # default: 5
 max-branches = 13  # default: 12
 max-returns = 6  # default: 6
 max-statements = 50  # default: 50
@@ -228,8 +235,12 @@ legacy_tox_ini = """
     desciption = Run tests with pytest
     skip_install = false
     deps =
-        pytest>=7.4.2
-        python-dotenv==1.0.0
+        pytest>=8.2.2
+        python-dotenv==1.0.1
+        matplotlib>=3  # for viz
+        pandas>=2
+        scikit-learn>=1
+        statsmodels>=0.13
     commands =
         pytest . -k "not test_browse_files and not test_check_executor and not test_free_memory"
 
@@ -237,9 +248,9 @@ legacy_tox_ini = """
     description = "Run linters with ruff"
     skip_install = false
     deps =
-        ruff>=0.1.6
+        ruff>=0.4.8
     commands =
-        ruff .
+        ruff check .
 """
 
 # For instance, run in shell: bumpver update --patch --no-fetch --dry
