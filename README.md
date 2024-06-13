@@ -1,7 +1,7 @@
 # ut.ils
 
-![Last update](https://img.shields.io/badge/last_update-Apr_16,_2024-green)
-![Last update](https://img.shields.io/badge/version-v.0.1.1-blue)
+![Last update](https://img.shields.io/badge/last_update-Jun_13,_2024-green)
+![Last update](https://img.shields.io/badge/version-v.0.2.0-blue)
 
 ## Project description
 
