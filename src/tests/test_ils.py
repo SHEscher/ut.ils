@@ -29,6 +29,7 @@ from ut.ils import (
     check_storage_size,
     cinput,
     cln,
+    compute_array_size,
     cprint,
     delete_dir_and_files,
     denormalize,
@@ -76,7 +77,7 @@ def foo():
     print("test")
 
 
-@pytest.fixture()
+@pytest.fixture
 def temp_dir_and_file():
     """Create temp dir and file."""
     TEMP_DIR.mkdir(exist_ok=True, mode=0o777, parents=True)
@@ -651,6 +652,21 @@ def test_check_storage_size(capsys):
     out, _ = capsys.readouterr()
     assert "Only trustworthy for pure python objects, otherwise returns size of view object" in out
     assert size_bytes < 150
+
+
+def test_compute_array_size(capsys):
+    """Test compute_array_size() function."""
+    dtype = np.uint8
+    arr = np.ones(shape=(2**8, 2**8, 2**8)).astype(dtype)  # 2**8 = 256
+    size_bytes = check_storage_size(obj=arr, verbose=False)
+    assert size_bytes == compute_array_size(shape=arr.shape, dtype=dtype, verbose=False)
+
+    dtype = np.float64
+    arr_shape = (15_000, 192, 164, 140)
+    compute_array_size(shape=arr_shape, dtype=dtype, verbose=True)
+    out, _ = capsys.readouterr()
+    assert f"Size of {dtype.__name__}-array of shape {arr_shape}:" in out
+    assert "GB" in out
 
 
 def test_save_obj(temp_dir_and_file):

@@ -896,18 +896,20 @@ def replace_line_in_file(
     if isinstance(pattern, str):
         pattern = re.compile(pattern)
     found = False
-    for old_line in fileinput.input(path_to_file, inplace=True):
-        match = pattern.search(old_line)
-        if match is not None:
-            found = True
-            if whole_line:
-                if len(fill_with) > 0:  # in the case of == 0: the line will be deleted
-                    fill_with = fill_with if fill_with.endswith("\n") else fill_with + "\n"
-                sys.stdout.write(fill_with)
+
+    with fileinput.input(path_to_file, inplace=True) as file:
+        for old_line in file:
+            match = pattern.search(old_line)
+            if match is not None:
+                found = True
+                if whole_line:
+                    if len(fill_with) > 0:  # in the case of == 0: the line will be deleted
+                        fill_with = fill_with if fill_with.endswith("\n") else fill_with + "\n"
+                    sys.stdout.write(fill_with)
+                else:
+                    sys.stdout.write(pattern.sub(fill_with, old_line))
             else:
-                sys.stdout.write(pattern.sub(fill_with, old_line))
-        else:
-            sys.stdout.write(old_line)
+                sys.stdout.write(old_line)
 
     return found
 
@@ -1042,6 +1044,28 @@ def check_storage_size(obj: Any, verbose: bool = True) -> int:
         print(f"Size of given object: {bytes_to_rep_string(size_bytes=size_bytes)} {message}")
 
     return size_bytes
+
+
+def compute_array_size(
+    shape: tuple[int, ...] | list[int, ...], dtype: np.dtype | int | float, verbose: bool = False
+) -> int:
+    """
+    Compute the theoretical size of a NumPy array with the given shape and data type.
+
+    :param shape: tuple, shape of the array (e.g., (n_samples, x, y, z))
+    :param dtype: data type of the array elements (e.g., np.float32, np.int64, np.uint8, int, float)
+    :param verbose: bool, print the size of the array in readable format
+    :return: size of the array in bytes
+    """
+    # Get the size of each element in bytes
+    element_size = np.dtype(dtype).itemsize
+    # Compute the total number of elements
+    num_elements = np.prod(shape)
+    # Compute the total size in bytes
+    total_size_in_bytes = num_elements * element_size
+    if verbose:
+        print(f"Size of {dtype.__name__}-array of shape {shape}: {bytes_to_rep_string(total_size_in_bytes)}")
+    return total_size_in_bytes
 
 
 # %% Save objects externally & load them o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o >><< o
