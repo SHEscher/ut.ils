@@ -9,7 +9,7 @@ A small collection of utility functions for Python-based research projects.
 
 ## Project structure
 
-## Install
+## Installation options
 
 `ut.ils` is optimized for Python versions  `>=3.8` and can be installed via `pip`:
 
