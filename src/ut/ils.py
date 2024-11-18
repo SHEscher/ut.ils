@@ -1134,8 +1134,7 @@ def load_obj(name: str, folder: str | PosixPath) -> Any:
 
     def _raise_name_issue() -> None:
         _msg = (
-            f"'{folder}' contains too many files which could fit name='{name}'.\n"
-            f"Specify full name including suffix!"
+            f"'{folder}' contains too many files which could fit name='{name}'.\nSpecify full name including suffix!"
         )
         raise ValueError(_msg)
 
