@@ -707,6 +707,14 @@ def test_save_obj(temp_dir_and_file):
     with pytest.raises(TypeError, match="Given object is not a numpy array"):
         save_obj(obj=[1, 2, 3], name=file_name, folder=temp_dir, hp=False, as_zip=False, save_as="npy")
 
+    # Check naming with "."
+    file_name = "test.save.file"
+
+    # save as pkl
+    save_obj(obj=arr, name=file_name, folder=temp_dir, hp=True, as_zip=False, save_as="pkl")
+    assert (temp_dir / f"{file_name}.pkl").exists()
+    (temp_dir / f"{file_name}.pkl").unlink()
+
 
 def test_load_obj(capsys, temp_dir_and_file):
     """Test load_obj() function."""
