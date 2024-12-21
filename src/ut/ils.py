@@ -1100,7 +1100,7 @@ def save_obj(obj: Any, name: str, folder: str, hp: bool = True, as_zip: bool = F
     save_as = save_as.lower()
     if save_as == "pkl":
         open_it, suffix = (gzip.open, ".pkl.gz") if as_zip else (open, ".pkl")
-        with open_it(p2save.with_suffix(suffix), "wb") as f:
+        with open_it(f"{p2save}{suffix}", "wb") as f:  # do not use .with_suffix() since it cuts, e.g., "file.name"
             if hp:
                 pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
             else:
