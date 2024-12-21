@@ -43,6 +43,7 @@ vizual = [  # this is for `ut.viz`
 ]
 
 develop = [
+    "bumpver==2024.1130",
     "ruff==0.8.4",
     "tox==4.23.2",
     "pre-commit==4.0.1",
