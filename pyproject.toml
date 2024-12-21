@@ -36,14 +36,14 @@ dependencies = [
 
 [project.optional-dependencies]
 vizual = [  # this is for `ut.viz`
-    "matplotlib>=3",
-    "pandas>=2",
-    "scikit-learn>=1",
-    "statsmodels>=0.13",
+    "matplotlib>=3,<4",
+    "pandas>=2,<3",
+    "scikit-learn>=1,<2",
+    "statsmodels>=0.13,<1",
 ]
 
 develop = [
-    "ruff==0.7.4",
+    "ruff==0.8.4",
     "tox==4.23.2",
     "pre-commit==4.0.1",
     "pytest==8.3.3",
