@@ -108,7 +108,7 @@ class DisplayablePath:
         if self.parent is None:
             return self.display_name
 
-        _filename_prefix = self.display_filename_prefix_last if self.is_last else self.display_filename_prefix_middle
+        _filename_prefix = self.display_filename_prefix_last if self.is_last else self.display_filename_prefix_middle  # noqa: RUF052
 
         parts = [f"{_filename_prefix!s} {self.display_name!s}"]
 
@@ -287,7 +287,7 @@ def loop_timer(
     :param loop_name: name the loop for print-out
     :param add_daytime: add leading day time to print-out
     """
-    _idx = loop_idx
+    _idx = loop_idx  # noqa: RUF052
     ll = loop_length
 
     duration = datetime.now() - start_time
@@ -472,7 +472,7 @@ def natural_sort(list_to_sort: list[str] | tuple[str] | Sequence[str] | Generato
     :param list_to_sort: List to sort.
     """
     convert = lambda text: int(text) if text.isdigit() else text.lower()  # noqa: E731
-    alphanum_key = lambda key: [convert(c) for c in re.split("([0-9]+)", key)]  # noqa: E731
+    alphanum_key = lambda key: [convert(c) for c in re.split(r"([0-9]+)", key)]  # noqa: E731
     return sorted(list_to_sort, key=alphanum_key)
 
 
@@ -1018,7 +1018,7 @@ def bytes2megabytes(n_bytes: int) -> float:
 def bytes_to_rep_string(size_bytes: int) -> str:
     """Convert the number of bytes into representative string."""
     size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-    i = int(math.floor(math.log(size_bytes, 10**3)))
+    i = math.floor(math.log(size_bytes, 10**3))
     p = math.pow(10**3, i)
     size_ = round(size_bytes / p, 2)
 
@@ -1133,10 +1133,10 @@ def load_obj(name: str, folder: str | PosixPath) -> Any:
     possible_fm = [".pkl", ".pkl.gz", ".npy", ".npz"]
 
     def _raise_name_issue() -> None:
-        _msg = (
+        a_msg = (
             f"'{folder}' contains too many files which could fit name='{name}'.\nSpecify full name including suffix!"
         )
-        raise ValueError(_msg)
+        raise ValueError(a_msg)
 
     # Check all files in the folder which find the name + *suffix
     found_files = [str(pa) for pa in Path(folder).glob(name + "*")]

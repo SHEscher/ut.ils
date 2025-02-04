@@ -44,7 +44,7 @@ vizual = [  # this is for `ut.viz`
 
 develop = [
     "bumpver==2024.1130",
-    "ruff==0.8.4",
+    "ruff==0.9.4",
     "tox==4.23.2",
     "pre-commit==4.0.1",
     "pytest==8.3.3",
@@ -159,8 +159,8 @@ lint.unfixable = [  # either with fix = true or when `ruff . --fix` is executed
 ]
 # Ignore specific rules or the whole set of a rule
 lint.ignore = [
-    "ANN101",  # flake8-annotations: Missing type annotation for self in method
-    "ANN102",  # flake8-annotations: Missing type annotation for cls in classmethod
+    # "ANN101",  # flake8-annotations: Missing type annotation for self in method [deprecated]
+    # "ANN102",  # flake8-annotations: Missing type annotation for cls in classmethod [deprecated]
     "ANN401",  # flake8-annotations: Any
     "COM812",  # Trailing comma missing
     "D203",  # 1 blank line required before class docstring: incompatible with D211 (=no blank line required)
