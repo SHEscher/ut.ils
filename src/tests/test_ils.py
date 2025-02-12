@@ -103,7 +103,8 @@ def test_tree(capsys):
     out, _ = capsys.readouterr()
     assert "├── README.md" in out
     assert "├── ut" in out
-    assert "└── ils.py" in out
+    assert "├── ils" in out
+    assert "└── viz.py" in out
 
 
 def test_find(capsys, temp_dir_and_file):
