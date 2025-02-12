@@ -111,8 +111,23 @@ exclude_lines = [
 directory = "src/tests/coverage_html_report"
 
 [tool.ruff]
+src = ["src/ut", "src/notebooks", "src/tests"]
+# Exclude a variety of commonly ignored directories.
+include = ["*.py", "*.pyi", "**/pyproject.toml"]
+
+#extend-exclude = []
+line-length = 119 # Same as flake8 and black
+target-version = "py38" # assume Python 3.8 - 3.12
+output-format = "concise"  # "grouped"  # default : "text"
+
+fix = false  # true: Ruff will try to fix errors automatically
+respect-gitignore = true  # files and folder ignored in gitignore are ignore by ruff as well [default: true]
+
+preview = true  # true: Ruff will use unstable rules and fixes; default: false
+
+[tool.ruff.lint]
 # Select rules / linters to apply
-lint.select = [   # add /comment-out rules (the list below does not contain all rules)
+select = [   # add /comment-out rules (the list below does not contain all rules)
     # "ALL", # all rules
     "D",  # pydocstyle
     "E", # pycodestyle [default]
@@ -150,17 +165,15 @@ lint.select = [   # add /comment-out rules (the list below does not contain all 
     "PL", # Pylint
     "NPY", # NumPy-specific rules
 ]  # run `ruff linter` to see all rules
-fix = false  # true: Ruff will try to fix errors automatically
+
 # List of rules to consider non-autofix-able.
-lint.unfixable = [  # either with fix = true or when `ruff . --fix` is executed
+unfixable = [  # either with fix = true or when `ruff . --fix` is executed
     "ERA001",  # found commented-out code
     "F401",  # unused imports
     # "RUF100", # `noqa` directives that are no longer applicable
 ]
 # Ignore specific rules or the whole set of a rule
-lint.ignore = [
-    # "ANN101",  # flake8-annotations: Missing type annotation for self in method [deprecated]
-    # "ANN102",  # flake8-annotations: Missing type annotation for cls in classmethod [deprecated]
+ignore = [
     "ANN401",  # flake8-annotations: Any
     "COM812",  # Trailing comma missing
     "D203",  # 1 blank line required before class docstring: incompatible with D211 (=no blank line required)
@@ -173,16 +186,7 @@ lint.ignore = [
     "TD002",  # Missing author in To-Do
     "TD003",  # Missing issue link on the line following a To-Do
 ]
-# lint.ignore-init-module-imports = true # void automatically removing unused imports in __init__.py [deprecated]
-respect-gitignore = true  # files and folder ignored in gitignore are ignore by ruff as well [default: true]
-src = ["src/ut", "src/notebooks", "src/tests"]
-# Exclude a variety of commonly ignored directories.
-include = ["*.py", "*.pyi", "**/pyproject.toml"]
-#extend-exclude = []
-line-length = 119 # Same as flake8 and black
-target-version = "py38" # assume Python 3.8 - 3.12
-output-format = "concise"  # "grouped"  # default : "text"
-preview = true  # true: Ruff will use unstable rules and fixes; default: false
+# ignore-init-module-imports = true # void automatically removing unused imports in __init__.py [deprecated]
 
 [tool.ruff.lint.extend-per-file-ignores]
 # Ignore specific rules in specific files
