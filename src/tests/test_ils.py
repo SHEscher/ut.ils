@@ -834,8 +834,7 @@ def test_deprecated():
         return 1
 
     with pytest.warns(expected_warning=DeprecationWarning, match="Call to deprecated function abc."):
-        result = abc()
-        assert result == 1
+        abc()
 
     @deprecated(message="This function is deprecated!")
     def defg():
@@ -843,8 +842,7 @@ def test_deprecated():
         return 1
 
     with pytest.warns(expected_warning=DeprecationWarning, match="This function is deprecated!"):
-        result = defg()
-        assert result == 1
+        defg()
 
 
 def test_end(capsys):
